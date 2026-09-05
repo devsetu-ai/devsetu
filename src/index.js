@@ -80,7 +80,22 @@ Provide your professional response below. End with:
 export default {
   async fetch(request, env, ctx) {
     if (request.method !== "POST") {
-      return new Response("DevSetu webhook endpoint — POST only", { status: 200 });
+      return new Response(
+        JSON.stringify({
+          status: "healthy",
+          service: "DevSetu",
+          version: "1.0.0",
+          model: "Google Gemini 3.5 Flash",
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
     }
 
     const id = request.headers.get("x-github-delivery");
