@@ -16,7 +16,7 @@
 
 - **🌐 Live Product Website:** [https://aibot-sonurust.vercel.app](https://aibot-sonurust.vercel.app)
 - **⚡ Webhook Endpoint:** `https://aibot-github-app.skbhati199.workers.dev`
-- **📦 GitHub App:** [Install on GitHub](https://github.com/apps/aibot-sonurust-app)
+- **📦 GitHub App:** [Install on GitHub](https://github.com/apps/devsetu-app)
 
 ---
 
