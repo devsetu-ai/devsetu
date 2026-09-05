@@ -253,8 +253,16 @@ export default {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
-    // 2. Health & Status
+    // 2. Health & Status (or Landing Page if visited by browser)
     if (url.pathname === "/" && request.method === "GET") {
+      const accept = request.headers.get("accept") || "";
+      if (accept.includes("text/html")) {
+        const targetUrl = new URL("/", "https://website-theta-black-24.vercel.app");
+        const forwardHeaders = new Headers(request.headers);
+        forwardHeaders.set("Host", "website-theta-black-24.vercel.app");
+        return fetch(targetUrl, { method: "GET", headers: forwardHeaders, redirect: "follow" });
+      }
+
       return new Response(
         JSON.stringify({
           status: "healthy",
@@ -512,7 +520,19 @@ export default {
       }
     }
 
-    // 7. GitHub App Webhooks (POST)
+    // 7. Frontend Proxy for custom domain (e.g. devsetu-ai.infoskillstechnology.com/console)
+    if (request.method === "GET" || request.method === "HEAD") {
+      const targetUrl = new URL(url.pathname + url.search, "https://website-theta-black-24.vercel.app");
+      const forwardHeaders = new Headers(request.headers);
+      forwardHeaders.set("Host", "website-theta-black-24.vercel.app");
+      return fetch(targetUrl, {
+        method: request.method,
+        headers: forwardHeaders,
+        redirect: "follow",
+      });
+    }
+
+    // 8. GitHub App Webhooks (POST)
     if (request.method !== "POST") {
       return new Response("Not Found", { status: 404, headers: CORS_HEADERS });
     }
