@@ -8,7 +8,7 @@ url: https://github.com/sonurust/aibot-github-app
 hook_attributes:
   url: https://aibot-github-app.skbhati199.workers.dev
 redirect_url: https://github.com/sonurust/aibot-github-app
-public: false
+public: true
 default_permissions:
   issues: write
   metadata: read
