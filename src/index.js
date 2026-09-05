@@ -140,6 +140,12 @@ export default {
       });
     });
 
+    app.webhooks.on("marketplace_purchase", async ({ payload }) => {
+      console.log(
+        `Marketplace event [${payload.action}]: plan ${payload.marketplace_purchase?.plan?.name} for ${payload.marketplace_purchase?.account?.login}`
+      );
+    });
+
     try {
       await app.webhooks.verifyAndReceive({ id, name, signature, payload });
       return new Response("ok", { status: 200 });
