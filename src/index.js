@@ -1,19 +1,75 @@
 /**
  * aibot-github-app — Cloudflare Worker webhook handler
- *
- * Replaces the previous Vercel serverless function. Runs on
- * Cloudflare's `fetch` event model rather than Probot's Node
- * server model, using @octokit/app directly (works on Workers
- * when the `nodejs_compat` compatibility flag is enabled — see
- * wrangler.toml).
- *
- * Roadmap position: same hello-world logic as index.js /
- * .github/workflows/aibot-comment.yml, just running on Cloudflare.
+ * Powered by Google Gemini 3.5 Flash
  */
 
 import { App } from "@octokit/app";
 
 const BOT_TRIGGER = "@aibot";
+const GEMINI_MODEL = "gemini-3.5-flash";
+
+async function generateGeminiReply(apiKey, { issue, comment, repo }) {
+  if (!apiKey) {
+    return [
+      `👋 Hi @${comment.user.login}, aibot here!`,
+      ``,
+      `**Issue:** ${issue.title}`,
+      `**Opened by:** @${issue.user.login}`,
+      `**Labels:** ${issue.labels.map((l) => l.name).join(", ") || "none"}`,
+      ``,
+      `*(GEMINI_API_KEY is not configured. Configure it to enable Gemini 3.5 Flash responses.)*`,
+    ].join("\n");
+  }
+
+  const prompt = `You are aibot, an intelligent GitHub assistant powered by Google Gemini 3.5 Flash.
+A developer mentioned you in a GitHub issue. Respond helpfully, clearly, and concisely in GitHub Flavored Markdown.
+
+Repository: ${repo.owner.login}/${repo.name}
+Issue #${issue.number}: ${issue.title}
+Issue Author: @${issue.user.login}
+Labels: ${issue.labels.map((l) => l.name).join(", ") || "none"}
+Issue Description:
+${issue.body || "(no description)"}
+
+Comment by @${comment.user.login}:
+${comment.body}
+
+Please provide a helpful, actionable response to @${comment.user.login}. Include relevant code blocks, debugging steps, or explanations if appropriate. End with:
+> ⚡ *Powered by Gemini 3.5 Flash*`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+          },
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Gemini API error:", errText);
+      return `👋 Hi @${comment.user.login}! I encountered an issue contacting Gemini 3.5 Flash (${res.status}). Please try again shortly.`;
+    }
+
+    const data = await res.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (reply) {
+      return reply;
+    }
+    return `👋 Hi @${comment.user.login}! I received your request but could not generate a response.`;
+  } catch (err) {
+    console.error("Failed to generate Gemini reply:", err);
+    return `👋 Hi @${comment.user.login}! Error calling Gemini 3.5 Flash: ${err.message}`;
+  }
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -49,15 +105,11 @@ export default {
       const issue = payload.issue;
       const repo = payload.repository;
 
-      const replyBody = [
-        `👋 Hi @${comment.user.login}, aibot here!`,
-        ``,
-        `**Issue:** ${issue.title}`,
-        `**Opened by:** @${issue.user.login}`,
-        `**Labels:** ${issue.labels.map((l) => l.name).join(", ") || "none"}`,
-        ``,
-        `_This is a hello-world reply from the Cloudflare Worker version — real fix suggestions are coming in the next iteration._`,
-      ].join("\n");
+      const replyBody = await generateGeminiReply(env.GEMINI_API_KEY, {
+        issue,
+        comment,
+        repo,
+      });
 
       await octokit.rest.issues.createComment({
         owner: repo.owner.login,

@@ -2,7 +2,7 @@ name: aibot hello-world responder
 
 # Runs whenever someone comments on an issue.
 # This is a self-contained alternative to the hosted GitHub App —
-# useful for demoing the concept inside a single repo with zero hosting.
+# powered by Google Gemini 3.5 Flash.
 
 on:
   issue_comment:
@@ -16,28 +16,79 @@ jobs:
     if: contains(github.event.comment.body, '@aibot') && github.event.comment.user.type != 'Bot'
     runs-on: ubuntu-latest
     steps:
-      - name: Reply with issue details
+      - name: Reply with Gemini 3.5 Flash
         uses: actions/github-script@v7
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         with:
           script: |
             const issue = context.payload.issue;
             const comment = context.payload.comment;
+            const repo = context.repo;
+            const apiKey = process.env.GEMINI_API_KEY;
 
-            const labels = issue.labels.map(l => l.name).join(', ') || 'none';
+            let replyBody = '';
 
-            const body = [
-              `👋 Hi @${comment.user.login}, aibot here!`,
-              ``,
-              `**Issue:** ${issue.title}`,
-              `**Opened by:** @${issue.user.login}`,
-              `**Labels:** ${labels}`,
-              ``,
-              `_This is a hello-world reply from the GitHub Action version — real fix suggestions are coming in the next iteration._`,
-            ].join('\n');
+            if (!apiKey) {
+              const labels = issue.labels.map(l => l.name).join(', ') || 'none';
+              replyBody = [
+                `👋 Hi @${comment.user.login}, aibot here!`,
+                ``,
+                `**Issue:** ${issue.title}`,
+                `**Opened by:** @${issue.user.login}`,
+                `**Labels:** ${labels}`,
+                ``,
+                `*(Add GEMINI_API_KEY secret to enable Gemini 3.5 Flash replies)*`,
+              ].join('\n');
+            } else {
+              const prompt = `You are aibot, an intelligent GitHub assistant powered by Google Gemini 3.5 Flash.
+A developer mentioned you in a GitHub issue. Respond helpfully, clearly, and concisely in GitHub Flavored Markdown.
+
+Repository: ${repo.owner}/${repo.repo}
+Issue #${issue.number}: ${issue.title}
+Issue Author: @${issue.user.login}
+Labels: ${issue.labels.map(l => l.name).join(', ') || 'none'}
+Issue Description:
+${issue.body || '(no description)'}
+
+Comment by @${comment.user.login}:
+${comment.body}
+
+Please provide a helpful, actionable response to @${comment.user.login}. Include relevant code blocks or explanation if needed. End with:
+> ⚡ *Powered by Gemini 3.5 Flash (GitHub Action)*`;
+
+              try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                      temperature: 0.7,
+                      maxOutputTokens: 2048,
+                    },
+                  }),
+                });
+
+                if (res.ok) {
+                  const data = await res.json();
+                  replyBody = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                } else {
+                  const errText = await res.text();
+                  console.error('Gemini API error:', errText);
+                }
+              } catch (err) {
+                console.error('Error calling Gemini:', err);
+              }
+
+              if (!replyBody) {
+                replyBody = `👋 Hi @${comment.user.login}! I encountered an issue calling Gemini 3.5 Flash.`;
+              }
+            }
 
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: repo.owner,
+              repo: repo.repo,
               issue_number: issue.number,
-              body,
+              body: replyBody,
             });
