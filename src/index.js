@@ -397,10 +397,119 @@ export default {
 
     // 6. GitHub OAuth Initiation Route
     if (url.pathname === "/api/v1/auth/github" && request.method === "GET") {
-      const clientId = env.GITHUB_CLIENT_ID || "Iv23ct3k6X8q8w2Y9Z10";
-      const redirectUri = encodeURIComponent(`${url.origin}/api/v1/auth/callback`);
-      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user,repo,read:org`;
+      const clientId = env.GITHUB_CLIENT_ID || "Iv23liy75K9USLWDx1bG";
+      const redirectUri = encodeURIComponent(
+        url.searchParams.get("redirect_uri") || `${url.origin}/api/v1/auth/callback`
+      );
+      const state = url.searchParams.get("state") || "web-console";
+      const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user,repo,read:org&state=${state}`;
       return Response.redirect(githubAuthUrl, 302);
+    }
+
+    // 6b. GitHub OAuth Callback Exchange Endpoint
+    if (url.pathname === "/api/v1/auth/callback" && request.method === "GET") {
+      const code = url.searchParams.get("code");
+      const clientId = env.GITHUB_CLIENT_ID || "Iv23liy75K9USLWDx1bG";
+      const clientSecret = env.GITHUB_CLIENT_SECRET || "88c7e79c40a0db2d55c125744e24ef098a4280a7";
+
+      if (!code) {
+        return new Response("Missing OAuth code from GitHub", { status: 400, headers: CORS_HEADERS });
+      }
+
+      try {
+        const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            client_id: clientId,
+            client_secret: clientSecret,
+            code,
+          }),
+        });
+
+        const tokenData = await tokenRes.json();
+        if (!tokenData.access_token) {
+          return new Response(`GitHub OAuth Error: ${tokenData.error_description || "Token exchange failed"}`, {
+            status: 400,
+            headers: CORS_HEADERS,
+          });
+        }
+
+        // Fetch authenticated user profile
+        const userRes = await fetch("https://api.github.com/user", {
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+            "User-Agent": "DevSetu-App",
+          },
+        });
+        const user = await userRes.json();
+
+        // Upsert into D1 database
+        if (env.DB && user?.id) {
+          try {
+            await env.DB.prepare(
+              `INSERT INTO accounts (id, login, type, email, avatar_url, plan, marketplace_status)
+               VALUES (?, ?, ?, ?, ?, 'free', 'active')
+               ON CONFLICT(id) DO UPDATE SET
+                 login = excluded.login,
+                 avatar_url = excluded.avatar_url,
+                 updated_at = CURRENT_TIMESTAMP`
+            )
+              .bind(
+                String(user.id),
+                user.login,
+                user.type || "User",
+                user.email || null,
+                user.avatar_url || null
+              )
+              .run();
+          } catch (dbErr) {
+            console.warn("Could not upsert user into D1:", dbErr.message);
+          }
+        }
+
+        const returnTo = "https://devsetu-ai.infoskillstechnology.com/console";
+        return Response.redirect(
+          `${returnTo}?login=${encodeURIComponent(user.login)}&avatar=${encodeURIComponent(
+            user.avatar_url || ""
+          )}&token=${encodeURIComponent(tokenData.access_token)}`,
+          302
+        );
+      } catch (err) {
+        return new Response(`OAuth callback failed: ${err.message}`, { status: 500, headers: CORS_HEADERS });
+      }
+    }
+
+    // 6c. Direct Token Exchange POST (for client-side SPA)
+    if (url.pathname === "/api/v1/auth/exchange" && request.method === "POST") {
+      try {
+        const { code } = await request.json();
+        const clientId = env.GITHUB_CLIENT_ID || "Iv23liy75K9USLWDx1bG";
+        const clientSecret = env.GITHUB_CLIENT_SECRET || "88c7e79c40a0db2d55c125744e24ef098a4280a7";
+
+        const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code }),
+        });
+
+        const tokenData = await tokenRes.json();
+        return new Response(JSON.stringify(tokenData), {
+          status: 200,
+          headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), {
+          status: 400,
+          headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+        });
+      }
     }
 
     // 7. GitHub App Webhooks (POST)
