@@ -1,0 +1,23 @@
+{
+  "name": "aibot-github-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hello-world GitHub App: responds to @aibot mentions on issues",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev:local": "probot run ./src/index.js --log-level debug",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@octokit/app": "^15.1.0"
+  },
+  "devDependencies": {
+    "probot": "^13.3.0",
+    "wrangler": "^3.78.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

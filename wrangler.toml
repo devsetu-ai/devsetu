@@ -1,0 +1,13 @@
+name = "aibot-github-app"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# Required: @octokit/app relies on some Node built-ins (crypto, etc.)
+# which Workers can polyfill via this flag.
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets (APP_ID, PRIVATE_KEY, WEBHOOK_SECRET) are NOT set here.
+# Set them with:
+#   wrangler secret put APP_ID
+#   wrangler secret put PRIVATE_KEY
+#   wrangler secret put WEBHOOK_SECRET
