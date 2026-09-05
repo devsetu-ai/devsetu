@@ -21,7 +21,7 @@ async function generateGeminiReply(apiKey, { issue, comment, repo }) {
     ].join("\n");
   }
 
-  const prompt = `You are aibot, an intelligent GitHub assistant powered by Google Gemini 3.5 Flash.
+  const prompt = `You are aibot-sonurust, an intelligent GitHub assistant powered by Google Gemini 3.5 Flash.
 A developer mentioned you in a GitHub issue. Respond helpfully, clearly, and concisely in GitHub Flavored Markdown.
 
 Repository: ${repo.owner.login}/${repo.name}
@@ -35,7 +35,7 @@ Comment by @${comment.user.login}:
 ${comment.body}
 
 Please provide a helpful, actionable response to @${comment.user.login}. Include relevant code blocks, debugging steps, or explanations if appropriate. End with:
-> ⚡ *Powered by Gemini 3.5 Flash*`;
+> ⚡ *Powered by Gemini 3.5 Flash (aibot-sonurust)*`;
 
   try {
     const res = await fetch(
