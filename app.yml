@@ -2,7 +2,7 @@
 # Used by Probot's manifest flow (https://YOUR_APP_URL/probot) to
 # register the app in one click instead of filling the form by hand.
 
-name: aibot-sonurust
+name: aibot-sonurust-app
 description: Replies to @aibot mentions on issues with issue details (hello-world starter)
 url: https://github.com/sonurust/aibot-github-app
 hook_attributes:

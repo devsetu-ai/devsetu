@@ -31,45 +31,26 @@ so pushing the repo (step 1) already activates it for **this** repo.
 - [x] Confirm the bot replied: `gh issue view <issue-number> --comments`
 
 ## 3. Register the GitHub App
-`gh` doesn't create GitHub Apps directly (no API for the manifest
-flow), so this step is done via browser, but `gh` can open it for you:
-- [ ] `gh api /app-manifests` isn't applicable — instead run the app
-      locally first: `npm install && npm run dev:local`
-- [ ] Visit `http://localhost:3000/probot/setup` — this reads
-      `app.yml` and pre-fills the registration form
-- [ ] Complete registration in the browser, then download the
-      generated **private key** (.pem) and note the **App ID** +
-      **Webhook secret**
+- [x] GitHub App registered: `aibot-sonurust-app` (App ID: `4838612`)
+- [x] Private key downloaded and webhook secret configured
 
 ## 4. Store secrets with `gh` (for CI / Actions use, if needed later)
 ```bash
-gh secret set APP_ID --body "<your-app-id>"
-gh secret set WEBHOOK_SECRET --body "<your-webhook-secret>"
-gh secret set PRIVATE_KEY < path/to/private-key.pem
+gh secret set APP_ID --body "4838612"
+gh secret set WEBHOOK_SECRET --body "2cbfac2526acd8fe8ca5815051414f9a43a09560"
+gh secret set PRIVATE_KEY < aibot-sonurust-app.2026-09-05.private-key.pem
 ```
-- [ ] Secrets set: verify with `gh secret list`
+- [x] Secrets set: verified with `gh secret list`
 
 ## 5. Deploy the App to Cloudflare Workers
-`gh` doesn't manage Cloudflare, so this stays on the Wrangler CLI:
-```bash
-npm install -g wrangler
-wrangler login
-wrangler secret put APP_ID
-wrangler secret put PRIVATE_KEY
-wrangler secret put WEBHOOK_SECRET
-npm run deploy   # or: wrangler deploy
-```
-- [ ] Cloudflare Worker deployment live
-- [ ] Webhook URL updated on the GitHub App settings page to the
-      printed Worker URL, e.g.
-      `https://aibot-github-app.YOUR-SUBDOMAIN.workers.dev`
-- [ ] Tail live logs to confirm delivery: `wrangler tail`
+- [x] Cloudflare Worker deployment live (`https://aibot-github-app.skbhati199.workers.dev`)
+- [x] Worker secrets configured: `APP_ID`, `PRIVATE_KEY`, `WEBHOOK_SECRET`
+- [x] Webhook URL and secret configured on GitHub App settings page
 
 ## 6. Install the App on a test repo
 ```bash
-gh repo view --web   # opens repo; from here click "Settings > Integrations"
-# or just visit the app's public page directly:
-# https://github.com/apps/aibot
+# Visit the app's public page to install:
+# https://github.com/apps/aibot-sonurust-app
 ```
 - [ ] App installed on at least one test repo
 - [ ] Comment `@aibot hello` on an issue there and confirm a reply
