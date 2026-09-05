@@ -40,4 +40,4 @@ The application does not request administrative access, billing access, or webho
 ### 5. Compliance, Terms & Reporting
 - **Privacy Policy:** [PRIVACY.md](PRIVACY.md)
 - **Terms of Service:** [TERMS.md](TERMS.md)
-- **Vulnerability Reporting:** Issues can be reported directly via [GitHub Issues](https://github.com/kodeok-ai/devsetu/issues) or to `skbhati199@gmail.com`.
+- **Vulnerability Reporting:** Issues can be reported directly via [GitHub Issues](https://github.com/devsetu-ai/devsetu/issues) or to `skbhati199@gmail.com`.

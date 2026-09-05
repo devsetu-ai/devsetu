@@ -7,7 +7,7 @@ description: Autonomous GitHub AI assistant powered by Gemini 3.5 Flash. Respond
 url: https://aibot-sonurust.vercel.app
 hook_attributes:
   url: https://aibot-github-app.skbhati199.workers.dev
-redirect_url: https://github.com/kodeok-ai/devsetu
+redirect_url: https://github.com/devsetu-ai/devsetu
 public: true
 default_permissions:
   issues: write

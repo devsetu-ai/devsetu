@@ -2,7 +2,7 @@
 
 **Last updated:** September 5, 2026
 
-Welcome to **DevSetu**, an autonomous GitHub AI assistant created by **kodeok-ai** to assist developers with issue triage, code explanations, and debugging. By installing, mentioning, or integrating DevSetu into your GitHub repositories, you agree to these Terms of Service.
+Welcome to **DevSetu**, an autonomous GitHub AI assistant created by **devsetu-ai** to assist developers with issue triage, code explanations, and debugging. By installing, mentioning, or integrating DevSetu into your GitHub repositories, you agree to these Terms of Service.
 
 ---
 
@@ -41,6 +41,6 @@ You agree to use DevSetu solely for lawful software engineering and repository m
 
 ## 6. Contact & Inquiries
 For questions regarding these Terms or support:
-- **Repository Issues:** [https://github.com/kodeok-ai/devsetu/issues](https://github.com/kodeok-ai/devsetu/issues)
-- **Organization:** [https://github.com/kodeok-ai](https://github.com/kodeok-ai)
+- **Repository Issues:** [https://github.com/devsetu-ai/devsetu/issues](https://github.com/devsetu-ai/devsetu/issues)
+- **Organization:** [https://github.com/devsetu-ai](https://github.com/devsetu-ai)
 - **Support Email:** `skbhati199@gmail.com`

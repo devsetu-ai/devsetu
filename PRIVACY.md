@@ -20,5 +20,5 @@ We do not sell, rent, or trade your data.
 
 ## 4. Contact & Support
 For inquiries, bug reports, or data removal requests:
-- Open an issue: [GitHub Issues](https://github.com/kodeok-ai/devsetu/issues)
+- Open an issue: [GitHub Issues](https://github.com/devsetu-ai/devsetu/issues)
 - Support Email: [skbhati199@gmail.com](mailto:skbhati199@gmail.com)
