@@ -19,16 +19,16 @@ git commit -m "Initial commit: aibot hello-world (App + Action)"
 # Create the repo on GitHub and push in one step
 gh repo create aibot-github-app --public --source=. --remote=origin --push
 ```
-- [ ] Repo created and code pushed
-- [ ] Confirm on GitHub: `gh repo view --web`
+- [x] Repo created and code pushed
+- [x] Confirm on GitHub: `gh repo view --web`
 
 ## 2. Quick win — enable the GitHub Action version first
 The workflow file is already at `.github/workflows/aibot-comment.yml`,
 so pushing the repo (step 1) already activates it for **this** repo.
-- [ ] Open an issue to test against: `gh issue create --title "Test aibot" --body "testing"`
-- [ ] Comment on it: `gh issue comment <issue-number> --body "@aibot hello"`
-- [ ] Check the run: `gh run list` then `gh run watch`
-- [ ] Confirm the bot replied: `gh issue view <issue-number> --comments`
+- [x] Open an issue to test against: `gh issue create --title "Test aibot" --body "testing"`
+- [x] Comment on it: `gh issue comment <issue-number> --body "@aibot hello"`
+- [x] Check the run: `gh run list` then `gh run watch`
+- [x] Confirm the bot replied: `gh issue view <issue-number> --comments`
 
 ## 3. Register the GitHub App
 `gh` doesn't create GitHub Apps directly (no API for the manifest

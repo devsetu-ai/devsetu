@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "probot": "^13.3.0",
-    "wrangler": "^3.78.0"
+    "wrangler": "^4.129.0"
   },
   "engines": {
     "node": ">=18.0.0"
