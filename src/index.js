@@ -1,17 +1,17 @@
 /**
- * aibot-github-app — Cloudflare Worker webhook handler
+ * DevSetu — Cloudflare Worker webhook handler
  * Powered by Google Gemini 3.5 Flash
  */
 
 import { App } from "@octokit/app";
 
-const BOT_TRIGGER = "@aibot";
+const BOT_TRIGGER_REGEX = /@(devsetu|devsetu-bot|aibot)\b/i;
 const GEMINI_MODEL = "gemini-3.5-flash";
 
 async function generateGeminiReply(apiKey, { issue, comment, repo }) {
   if (!apiKey) {
     return [
-      `👋 Hi @${comment.user.login}, aibot here!`,
+      `👋 Hi @${comment.user.login}, DevSetu here!`,
       ``,
       `**Issue:** ${issue.title}`,
       `**Opened by:** @${issue.user.login}`,
@@ -21,7 +21,7 @@ async function generateGeminiReply(apiKey, { issue, comment, repo }) {
     ].join("\n");
   }
 
-  const prompt = `You are aibot-sonurust, a senior software engineer and professional GitHub AI assistant powered by Google Gemini 3.5 Flash.
+  const prompt = `You are DevSetu, a senior software engineer and professional GitHub AI assistant powered by Google Gemini 3.5 Flash.
 A developer has tagged you in an issue discussion.
 
 Response Guidelines:
@@ -41,7 +41,7 @@ User Comment from @${comment.user.login}:
 ${comment.body}
 
 Provide your professional response below. End with:
-> ⚡ *Powered by Gemini 3.5 Flash (aibot-sonurust)*`;
+> ⚡ *Powered by Gemini 3.5 Flash (DevSetu)*`;
 
   try {
     const res = await fetch(
@@ -80,7 +80,7 @@ Provide your professional response below. End with:
 export default {
   async fetch(request, env, ctx) {
     if (request.method !== "POST") {
-      return new Response("aibot webhook endpoint — POST only", { status: 200 });
+      return new Response("DevSetu webhook endpoint — POST only", { status: 200 });
     }
 
     const id = request.headers.get("x-github-delivery");
@@ -104,9 +104,9 @@ export default {
       // Ignore bot comments (including our own) to avoid loops
       if (comment.user.type === "Bot") return;
 
-      // Only react to actual @aibot mentions
+      // React to @devsetu or @aibot mentions
       const body = comment.body || "";
-      if (!body.toLowerCase().includes(BOT_TRIGGER)) return;
+      if (!BOT_TRIGGER_REGEX.test(body)) return;
 
       const issue = payload.issue;
       const repo = payload.repository;

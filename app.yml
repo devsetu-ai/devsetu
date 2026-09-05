@@ -2,9 +2,9 @@
 # Used by Probot's manifest flow (https://YOUR_APP_URL/probot) to
 # register the app in one click instead of filling the form by hand.
 
-name: aibot-sonurust-app
-description: Replies to @aibot mentions on issues with issue details (hello-world starter)
-url: https://github.com/sonurust/aibot-github-app
+name: devsetu-app
+description: Autonomous GitHub AI assistant powered by Gemini 3.5 Flash. Responds to @devsetu mentions.
+url: https://aibot-sonurust.vercel.app
 hook_attributes:
   url: https://aibot-github-app.skbhati199.workers.dev
 redirect_url: https://github.com/sonurust/aibot-github-app

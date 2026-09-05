@@ -1,113 +1,84 @@
-# aibot — Hello World GitHub App
+# DevSetu — AI-Powered GitHub Assistant
 
-Replies to `@aibot` mentions on issue comments with the issue's real
-details (title, author, labels). This is step 1 of a roadmap toward
-a full AI-powered issue/PR assistant.
+<p align="center">
+  <img src="logo-256.png" alt="DevSetu Logo" width="128" />
+</p>
 
-Two ways to run this are included:
-
-1. **GitHub App** (`src/index.js`) — hosted on Cloudflare Workers,
-   installable on any repo/org, listable on GitHub Marketplace.
-2. **GitHub Action** (`.github/workflows/aibot-comment.yml`) — runs
-   inside a single repo, zero external hosting, good for a fast demo.
+<p align="center">
+  <b>Autonomous, senior-level issue triage, debugging, and code patches powered by Google Gemini 3.5 Flash.</b>
+</p>
 
 ---
 
-## Option A — Deploy the GitHub App (Cloudflare Workers)
+## 🚀 Overview
 
-The production webhook handler runs on Cloudflare Workers using
-`@octokit/app` directly (Probot itself doesn't run on the Workers
-runtime — it expects a long-running Node server, not Workers' `fetch`
-model). `index.js` + `npm run dev:local` still uses Probot, but only
-for the one-time local App **registration** step below.
+**DevSetu** ("Developer Bridge") connects developer issues and discussions directly with Google's state-of-the-art **Gemini 3.5 Flash** model. Tagging `@devsetu` in any issue comment triggers immediate, structured engineering guidance, reproduction steps, and ready-to-merge code fixes.
 
-### 1. Register the App on GitHub
-- Run the local Probot app once, just to use its manifest flow:
-  ```bash
-  npm install
-  npm run dev:local
-  ```
-  Then visit `http://localhost:3000/probot/setup` — it reads
-  `app.yml` and pre-fills the GitHub App registration form for you.
-- When asked for the webhook URL, use your future Worker URL:
-  `https://aibot-github-app.YOUR-SUBDOMAIN.workers.dev`
-- Permissions needed: **Issues: Read & write**, **Contents: Read-only**,
-  **Metadata: Read-only** (already declared in `app.yml`).
-- Subscribe to the **Issue comment** event.
-- After creation, generate a **private key** (.pem file) and note your
-  **App ID** and **Webhook secret**.
-
-### 2. Deploy to Cloudflare Workers
-```bash
-npm install -g wrangler
-cd aibot-github-app
-wrangler login
-```
-Set the three secrets Wrangler will prompt you to paste in:
-```bash
-wrangler secret put APP_ID
-wrangler secret put PRIVATE_KEY
-wrangler secret put WEBHOOK_SECRET
-```
-> For `PRIVATE_KEY`, paste the full contents of the `.pem` file
-> (including the `-----BEGIN/END RSA PRIVATE KEY-----` lines).
-
-Then deploy:
-```bash
-npm run deploy
-# or: wrangler deploy
-```
-This prints your live Worker URL, e.g.
-`https://aibot-github-app.your-subdomain.workers.dev`. If it differs
-from what you entered during registration, update the webhook URL in
-the GitHub App settings page to match exactly.
-
-To iterate locally before deploying:
-```bash
-npm run dev
-# or: wrangler dev
-```
-
-### 3. Install & test
-- Install the app on a test repo from your App's public page
-  (`https://github.com/apps/aibot`).
-- Open any issue, comment `@aibot hello`, and confirm it replies
-  within a few seconds.
-- Check live logs any time with: `wrangler tail`
+- **🌐 Live Product Website:** [https://aibot-sonurust.vercel.app](https://aibot-sonurust.vercel.app)
+- **⚡ Webhook Endpoint:** `https://aibot-github-app.skbhati199.workers.dev`
+- **📦 GitHub App:** [Install on GitHub](https://github.com/apps/aibot-sonurust-app)
 
 ---
 
-## Option B — Run the GitHub Action version (no hosting)
+## 🛠️ Key Capabilities
 
-1. Copy `.github/workflows/aibot-comment.yml` into any repo.
-2. Comment `@aibot` on an issue in that repo.
-3. The Action runs automatically — check the **Actions** tab if it
-   doesn't reply within a minute.
-
-No secrets or hosting required — it uses the repo's built-in
-`GITHUB_TOKEN`.
+- **Contextual Issue Triage:** Analyzes issue title, description, labels, and conversation history.
+- **Actionable Code Patches:** Generates syntax-highlighted code snippets and diffs.
+- **Senior-Level Architecture Advice:** Provides guidance on performance, security, and edge cases.
+- **Edge Performance:** Powered by serverless Cloudflare Workers with sub-second response times.
+- **Zero Retention Privacy:** Your code and discussions are never stored or trained on.
 
 ---
 
-## Publishing to GitHub Marketplace
+## 💡 How to Use
 
-Once the hosted App (Option A) is stable:
+Simply mention `@devsetu` in any issue or pull request comment:
 
-1. Go to your App's settings page → **Marketplace listing** tab.
-2. Fill in: description, categories (e.g. *Utilities*, *Support*),
-   screenshots of it replying on a real issue, and pricing plans
-   (start with a **Free** plan while you validate demand).
-3. GitHub requires a support email/URL and a privacy policy URL —
-   even a simple static page satisfies this for the first listing.
-4. Submit for review. GitHub manually reviews new listings
-   (typically a few business days) before it goes public.
-5. Once approved, orgs can install and (if you add paid plans) be
-   billed directly through GitHub's Marketplace billing API.
+```markdown
+@devsetu TypeError: Cannot read properties of undefined (reading 'map') in RepositoryList.tsx
+```
+
+DevSetu will review the context and reply with a structured breakdown:
+- 📌 **Summary**
+- 🔍 **Technical Analysis**
+- 💡 **Recommended Solution**
+- ⚠️ **Considerations & Edge Cases**
+- 🚀 **Next Steps**
 
 ---
 
-## Next steps (per the earlier roadmap)
-- [ ] Swap the static reply in `src/index.js` for a real Claude API call
-- [ ] Add repo file/README context to the prompt for smarter answers
-- [ ] Support more commands: `@aibot summarize`, `@aibot explain`
-- [ ] Add a pricing tier once usage validates demand
+## ⚙️ Architecture & Deployment
+
+### 1. Cloudflare Workers (`src/index.js`)
+Handles GitHub webhook events (`issue_comment.created`), verifies HMAC signatures with `@octokit/app`, and generates replies using the Gemini API.
+
+```bash
+# Deploy to Cloudflare
+npx wrangler deploy
+```
+
+### 2. Standalone GitHub Action (`.github/workflows/devsetu-comment.yml`)
+Run DevSetu directly in your repository without hosted infrastructure.
+
+```yaml
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  reply:
+    if: github.event.comment && contains(github.event.comment.body, '@devsetu') && github.event.comment.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # ...
+```
+
+---
+
+## 📄 License & Privacy
+
+- [Privacy Policy](PRIVACY.md)
+- Built with ❤️ by [Sonu Kumar](https://github.com/sonurust)

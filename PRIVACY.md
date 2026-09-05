@@ -1,10 +1,10 @@
-# Privacy Policy for aibot-sonurust
+# Privacy Policy for DevSetu
 
 **Last updated:** September 5, 2026
 
 ## 1. Information We Collect
-`aibot-sonurust` operates as a GitHub App and GitHub Action to assist developers in issues and pull requests.
-- **Issue & Comment Data:** When `@aibot` or `@aibot-sonurust` is mentioned, the bot processes the text of the issue title, body, and comment to generate relevant AI responses.
+`DevSetu` operates as a GitHub App and GitHub Action to assist developers in issues and pull requests.
+- **Issue & Comment Data:** When `@devsetu` is mentioned, the bot processes the text of the issue title, body, and comment to generate relevant AI responses.
 - **Identifiers:** Public GitHub usernames and repository names are processed solely to direct responses to the appropriate thread.
 
 ## 2. How Information is Used
