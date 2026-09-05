@@ -580,7 +580,7 @@ export default {
           `- **Pro Plan ($29/mo)**: 1,500 requests/day, Gemini 3.8 Flash High Reasoning, PR code reviews.`,
           `- **Enterprise ($149/mo)**: Unlimited requests, Claude 5.1 Extra High, Custom workspace rules.`,
           ``,
-          `👉 [**Upgrade on GitHub Marketplace**](https://github.com/marketplace/devsetu-app)`,
+          `👉 [**Upgrade on GitHub Marketplace**](https://github.com/marketplace/devsetu)`,
         ].join("\n");
 
         await octokit.rest.issues.createComment({
