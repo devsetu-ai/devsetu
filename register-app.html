@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Register aibot GitHub App</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 24px;
+      line-height: 1.6;
+      color: #24292f;
+      background: #f6f8fa;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    h1 { margin-top: 0; font-size: 24px; }
+    h3 { margin-top: 0; font-size: 16px; }
+    p { margin: 8px 0 16px; font-size: 14px; }
+    button {
+      background-color: #2da44e;
+      color: white;
+      border: 1px solid rgba(27,31,36,0.15);
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background-color: #2c974b; }
+    code {
+      background: #f6f8fa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 13px;
+      border: 1px solid #e1e4e8;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 12px;
+      background: #dafbe1;
+      color: #1a7f37;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Step 1 of 2</span>
+    <h1>🚀 One-Click GitHub App Registration</h1>
+    <p>
+      Clicking the button below submits your pre-configured manifest to GitHub.
+      All permissions (Issues: write, Contents: read, Metadata: read) and events (issue_comment)
+      are pre-populated with your live Cloudflare Worker webhook URL.
+    </p>
+
+    <form action="https://github.com/settings/apps/new" method="post" target="_blank">
+      <input type="hidden" name="manifest" id="manifest">
+      <button type="submit">Register App on GitHub →</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <span class="badge">Step 2 of 2</span>
+    <h3>After Creating the App on GitHub:</h3>
+    <ol>
+      <li>Note down the <b>App ID</b> shown at the top of the App settings page.</li>
+      <li>Scroll down to <b>Private keys</b> and click <b>Generate a private key</b> (downloads a <code>.pem</code> file).</li>
+      <li>Save the downloaded <code>.pem</code> file in this folder or copy its contents.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Pre-configured Webhook Secret</h3>
+    <p>Already saved in Cloudflare Worker (<code>WEBHOOK_SECRET</code>):</p>
+    <pre>2cbfac2526acd8fe8ca5815051414f9a43a09560</pre>
+  </div>
+
+  <script>
+    const manifest = {
+      name: "aibot-sonurust",
+      url: "https://github.com/sonurust/aibot-github-app",
+      hook_attributes: {
+        url: "https://aibot-github-app.skbhati199.workers.dev",
+        secret: "2cbfac2526acd8fe8ca5815051414f9a43a09560"
+      },
+      redirect_url: "https://github.com/sonurust/aibot-github-app",
+      description: "Replies to @aibot mentions on issues with issue details (hello-world starter)",
+      public: false,
+      default_permissions: {
+        issues: "write",
+        metadata: "read",
+        contents: "read"
+      },
+      default_events: [
+        "issue_comment"
+      ]
+    };
+    document.getElementById('manifest').value = JSON.stringify(manifest);
+  </script>
+</body>
+</html>

@@ -2,12 +2,12 @@
 # Used by Probot's manifest flow (https://YOUR_APP_URL/probot) to
 # register the app in one click instead of filling the form by hand.
 
-name: aibot
+name: aibot-sonurust
 description: Replies to @aibot mentions on issues with issue details (hello-world starter)
-url: https://example.com
+url: https://github.com/sonurust/aibot-github-app
 hook_attributes:
-  url: https://example.com/api/github/webhooks
-redirect_url: https://example.com/probot/setup
+  url: https://aibot-github-app.skbhati199.workers.dev
+redirect_url: https://github.com/sonurust/aibot-github-app
 public: false
 default_permissions:
   issues: write
