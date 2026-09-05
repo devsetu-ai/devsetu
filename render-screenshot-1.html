@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub Issue #2 - DevSetu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1440px;
+      height: 900px;
+      overflow: hidden;
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    /* GitHub Top Header */
+    .gh-header {
+      background: #010409;
+      border-bottom: 1px solid #21262d;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .repo-breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #7d8590;
+    }
+    .repo-breadcrumbs a { color: #2f81f7; text-decoration: none; font-weight: 600; }
+    .badge-public {
+      border: 1px solid #30363d;
+      border-radius: 24px;
+      padding: 1px 8px;
+      font-size: 12px;
+      color: #7d8590;
+    }
+    .gh-tabs {
+      background: #010409;
+      border-bottom: 1px solid #21262d;
+      padding: 0 24px;
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+    }
+    .tab {
+      padding: 10px 8px;
+      color: #7d8590;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab.active {
+      color: #f0f6fc;
+      border-bottom: 2px solid #f78166;
+      font-weight: 600;
+    }
+    .tab-counter {
+      background: #21262d;
+      color: #e6edf3;
+      border-radius: 20px;
+      padding: 0 6px;
+      font-size: 12px;
+    }
+    /* Main Layout */
+    .content-container {
+      display: flex;
+      padding: 24px 32px;
+      gap: 24px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .main-column { flex: 1; min-width: 0; }
+    .sidebar { width: 280px; flex-shrink: 0; }
+    
+    /* Issue Header */
+    .issue-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .issue-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #f0f6fc;
+    }
+    .issue-num { color: #7d8590; font-weight: 300; font-size: 24px; }
+    .issue-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #21262d;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #7d8590;
+    }
+    .state-badge {
+      background: #238636;
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* Comment Cards */
+    .timeline-item {
+      position: relative;
+      margin-bottom: 18px;
+    }
+    .comment-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .comment-header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #7d8590;
+    }
+    .author-badge {
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-size: 11px;
+      color: #7d8590;
+      margin-left: 6px;
+    }
+    .bot-pill {
+      background: rgba(47,129,247,0.15);
+      color: #58a6ff;
+      border: 1px solid rgba(47,129,247,0.4);
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .comment-body {
+      padding: 14px 18px;
+      color: #e6edf3;
+      font-size: 13.5px;
+    }
+    .comment-body h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 10px 0 6px 0;
+      color: #58a6ff;
+    }
+    .code-block {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 8px 0;
+      color: #e6edf3;
+      overflow: hidden;
+    }
+    .kw { color: #ff7b72; }
+    .fn { color: #d2a8ff; }
+    .str { color: #a5d6ff; }
+    .typ { color: #79c0ff; }
+    .cm { color: #8b949e; }
+    .signoff {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #21262d;
+      font-size: 12px;
+      color: #8b949e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-section {
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #7d8590;
+    }
+    .sidebar-title {
+      font-weight: 600;
+      color: #e6edf3;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .label-pill {
+      display: inline-block;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .label-bug { background: #b60205; color: #ffffff; }
+    .label-ai { background: #1d76db; color: #ffffff; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="gh-header">
+    <div class="repo-breadcrumbs">
+      <span>📦</span>
+      <a href="#">kodeok-ai</a>
+      <span>/</span>
+      <a href="#">devsetu</a>
+      <span class="badge-public">Public</span>
+    </div>
+    <div style="font-size: 12px; color: #7d8590; display: flex; gap: 12px;">
+      <span>⭐️ Star 0</span>
+      <span>👁 Watch 1</span>
+      <span>🍴 Fork 0</span>
+    </div>
+  </div>
+
+  <div class="gh-tabs">
+    <div class="tab">Code</div>
+    <div class="tab active">Issues <span class="tab-counter">2</span></div>
+    <div class="tab">Pull requests <span class="tab-counter">0</span></div>
+    <div class="tab">Actions</div>
+    <div class="tab">Marketplace</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-container">
+    <div class="main-column">
+      <div class="issue-title-row">
+        <h1 class="issue-title">Bug: TypeError cannot read properties of undefined in UserList.tsx</h1>
+        <span class="issue-num">#2</span>
+      </div>
+      <div class="issue-meta">
+        <span class="state-badge">⊙ Open</span>
+        <span><b>sonurust</b> opened this issue • 2 comments</span>
+      </div>
+
+      <!-- Developer Comment -->
+      <div class="timeline-item">
+        <div class="comment-card">
+          <div class="comment-header">
+            <div>
+              <b style="color: #f0f6fc;">sonurust</b> commented 2 minutes ago
+              <span class="author-badge">Author</span>
+            </div>
+          </div>
+          <div class="comment-body" style="padding: 10px 18px;">
+            <p><code style="background: #21262d; padding: 2px 6px; border-radius: 4px; color: #58a6ff;">@devsetu</code> Please provide the complete refactored TypeScript component with senior-level error boundaries, null defense, and unit tests.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DevSetu AI Senior Engineer Reply -->
+      <div class="timeline-item">
+        <div class="comment-card" style="border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);">
+          <div class="comment-header" style="background: #131d2e; border-color: rgba(56, 189, 248, 0.3);">
+            <div>
+              <b style="color: #38bdf8;">DevSetu</b>
+              <span class="bot-pill">bot</span>
+              <span class="author-badge" style="border-color: #38bdf8; color: #38bdf8;">Gemini 3.5 Flash</span>
+              <span style="margin-left: 8px;">replied 1 minute ago</span>
+            </div>
+            <div style="font-size: 11px; color: #38bdf8;">⚡ Sub-second response</div>
+          </div>
+          <div class="comment-body">
+            <p>Hello @sonurust,</p>
+            <p style="margin-top: 4px;">I have analyzed the runtime exception in <code>UserList.tsx</code> and prepared a production-ready, defensively designed refactoring with error boundaries and full test coverage.</p>
+            
+            <h3>📌 Root Cause Analysis</h3>
+            <p><code>TypeError: Cannot read properties of undefined (reading 'map')</code> occurs because the <code>users</code> prop is declared as optional (<code>users?: User[]</code>). When the view renders in a loading or uninitialized state, calling <code>.map()</code> directly crashes the thread.</p>
+
+            <h3>💡 Recommended Production Solution (`UserList.tsx`)</h3>
+            <pre class="code-block"><code><span class="kw">export interface</span> <span class="typ">User</span> {
+  <span class="str">id</span>: <span class="typ">string | number</span>;
+  <span class="str">name</span>: <span class="typ">string</span>;
+}
+
+<span class="kw">export interface</span> <span class="typ">UserListProps</span> {
+  <span class="str">users?</span>: <span class="typ">User[]</span>;
+  <span class="str">isLoading?</span>: <span class="typ">boolean</span>;
+}
+
+<span class="kw">export function</span> <span class="fn">UserList</span>({ <span class="str">users</span> = [], <span class="str">isLoading</span> }: <span class="typ">UserListProps</span>) {
+  <span class="kw">if</span> (<span class="str">isLoading</span>) <span class="kw">return</span> &lt;<span class="typ">div</span> <span class="str">className</span>=<span class="str">"animate-pulse text-slate-400"</span>&gt;Loading users...&lt;/<span class="typ">div</span>&gt;;
+  <span class="kw">if</span> (!<span class="str">users.length</span>) <span class="kw">return</span> &lt;<span class="typ">p</span> <span class="str">className</span>=<span class="str">"text-slate-500"</span>&gt;No team members found.&lt;/<span class="typ">p</span>&gt;;
+
+  <span class="kw">return</span> (
+    &lt;<span class="typ">ul</span> <span class="str">className</span>=<span class="str">"divide-y divide-slate-800"</span>&gt;
+      {<span class="str">users</span>.<span class="fn">map</span>((<span class="str">user</span>) =&gt; (
+        &lt;<span class="typ">li</span> <span class="str">key</span>={<span class="str">user.id</span>} <span class="str">className</span>=<span class="str">"py-2 font-medium"</span>&gt;{<span class="str">user.name</span>}&lt;/<span class="typ">li</span>&gt;
+      ))}
+    &lt;/<span class="typ">ul</span>&gt;
+  );
+}</code></pre>
+
+            <div class="signoff">
+              <span>⚡ <i>Powered by Google Gemini 3.5 Flash (DevSetu Senior AI)</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Assignees</div>
+        <span>None yet</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Labels</div>
+        <span class="label-pill label-bug">bug</span>
+        <span class="label-pill label-ai">ai-reviewed</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">AI Engine</div>
+        <span style="color: #38bdf8; font-weight: 600;">Google Gemini 3.5 Flash</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Execution Target</div>
+        <span>Cloudflare Workers (Edge)</span>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Privacy Level</div>
+        <span style="color: #3fb950;">Zero Retention / No External DB</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
